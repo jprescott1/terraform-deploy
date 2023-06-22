@@ -1,8 +1,8 @@
 name: 'Terraform Post-Merge'
 
 on:
-  push:
-    branches: [main]
+  pull_request:
+    types: [closed]
 
 permissions:
   contents: read
