@@ -1,8 +1,6 @@
-name: 'Terraform'
+name: 'Terraform Post-Merge'
 
 on:
-  pull_request:
-    types: [opened, closed, synchronize]
   push:
     branches: [main]
 
@@ -14,8 +12,8 @@ env:
   DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
 jobs:
-  terraform-pre-merge:
-    name: 'Terraform Pre-Merge'
+  terraform-post-merge:
+    name: 'Terraform Post-Merge'
     runs-on: ubuntu-latest
     environment: production
 
@@ -33,31 +31,9 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      - name: Terraform Format
-        run: terraform fmt -check
-
-      - name: Terraform Plan (Pre-Merge)
-        run: terraform plan -input=false
-
-  terraform-post-merge:
-    name: 'Terraform Post-Merge'
-    runs-on: ubuntu-latest
-    environment: production
-    needs: terraform-pre-merge
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
-
-      - name: Terraform Init
-        run: terraform init
-
       - name: Terraform Plan (Post-Merge)
         run: terraform plan -input=false
 
       - name: Terraform Apply (Post-Merge)
         run: terraform apply -auto-approve -input=false
-        if: github.event.pull_request.merged == true
+        if: github.event_name == 'push'
