@@ -1,11 +1,10 @@
 name: 'Terraform'
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
-    types:
-      - closed
+    types: [opened, closed]
+  push:
+    branches: [main]
 
 permissions:
   contents: read
@@ -15,8 +14,8 @@ env:
   DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
 jobs:
-  terraform:
-    name: 'Terraform'
+  terraform-pre-merge:
+    name: 'Terraform Pre-Merge'
     runs-on: ubuntu-latest
     environment: production
 
@@ -25,26 +24,40 @@ jobs:
         shell: bash
 
     steps:
-    # Checkout the repository to the GitHub Actions runner
-    - name: Checkout
-      uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
 
-    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    - name: Terraform Init
-      run: terraform init
+      - name: Terraform Init
+        run: terraform init
 
-    # Checks that all Terraform configuration files adhere to a canonical format
-    - name: Terraform Format
-      run: terraform fmt -check
+      - name: Terraform Format
+        run: terraform fmt -check
 
-    # Generates an execution plan for Terraform
-    - name: Terraform Plan
-      run: terraform plan -input=false
+      - name: Terraform Plan (Pre-Merge)
+        run: terraform plan -input=false
 
-    - name: Terraform Apply
-      run: terraform apply -auto-approve -input=false
-      if: github.event.pull_request.merged == true
+  terraform-post-merge:
+    name: 'Terraform Post-Merge'
+    runs-on: ubuntu-latest
+    environment: production
+    needs: terraform-pre-merge
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan (Post-Merge)
+        run: terraform plan -input=false
+
+      - name: Terraform Apply (Post-Merge)
+        run: terraform apply -auto-approve -input=false
+        if: github.event.pull_request.merged == true
