@@ -2,13 +2,9 @@ name: 'Terraform'
 
 on:
   pull_request:
-    types: [opened, closed]
+    types: [opened, closed, synchronize]
   push:
     branches: [main]
-  workflow_run:
-    workflows: ["Terraform"]
-    types:
-      - completed
 
 permissions:
   contents: read
