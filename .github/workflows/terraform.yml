@@ -1,11 +1,10 @@
 name: 'Terraform'
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
-    types:
-      - closed
+    types: [opened, closed]
+  push:
+    branches: [main]
 
 permissions:
   contents: read
