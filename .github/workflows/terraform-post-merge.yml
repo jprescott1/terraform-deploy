@@ -1,8 +1,8 @@
 name: 'Terraform Post-Merge'
 
 on:
-  push:
-    branches: [main]
+  pull_request:
+    types: [closed]
 
 permissions:
   contents: read
@@ -36,4 +36,4 @@ jobs:
 
       - name: Terraform Apply (Post-Merge)
         run: terraform apply -auto-approve -input=false
-        if: github.event_name == 'push'
+        if: github.event.pull_request.merged == true
