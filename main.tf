@@ -16,11 +16,5 @@ resource "digitalocean_kubernetes_cluster" "terra-sfo3" {
     name       = "worker-pool"
     size       = "s-2vcpu-2gb"
     node_count = 3
-
-    taint {
-      key    = "workloadKind"
-      value  = "database"
-      effect = "NoSchedule"
-    }
   }
 }
