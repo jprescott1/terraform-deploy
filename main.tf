@@ -5,17 +5,3 @@ terraform {
     prefix = "./tf-deploy"
   }
 }
-
-resource "digitalocean_droplet" "http1" {
-  image  = "ubuntu-20-04-x64"
-  name   = "http1"
-  region = "nyc3"
-  size   = "s-1vcpu-1gb"
-  ssh_keys = [
-    data.digitalocean_ssh_key.terraform.fingerprint
-  ]
-}
-
-data "digitalocean_ssh_key" "terraform" {
-  name = "M2"
-}
