@@ -1,6 +1,6 @@
 resource "digitalocean_kubernetes_cluster" "terra-sfo3" {
-  name    = "terra-sfo3"
-  region  = "sfo3"
+  name    = "terra-nyc1"
+  region  = "nyc1"
   version = "1.30.4-do.0"
 
   node_pool {
